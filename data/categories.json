@@ -1,0 +1,6 @@
+{
+  "Programming": ["python", "java", "c++", "javascript"],
+  "Web Development": ["html", "css", "react", "node.js", "flask", "django"],
+  "Data Science": ["pandas", "numpy", "tensorflow", "pytorch", "machine learning", "data analysis", "deep learning"],
+  "DevOps": ["aws", "docker"]
+}
