@@ -7,9 +7,7 @@ import matplotlib.pyplot as plt
 from spacy.matcher import PhraseMatcher
 from collections import Counter
 
-# ======================
-# APP CONFIG
-# ======================
+
 st.set_page_config(page_title="Smart Resume Skill Extractor", page_icon="💼", layout="wide")
 st.markdown(
     """
@@ -30,9 +28,7 @@ st.markdown(
 
 nlp = spacy.load("en_core_web_sm")
 
-# ======================
-# UTIL FUNCTIONS
-# ======================
+
 def extract_text_from_pdf(file):
     text = ""
     with pdfplumber.open(file) as pdf:
@@ -92,20 +88,18 @@ def highlight_skills_in_text(text, skills):
     return text
 
 
-# ======================
-# STREAMLIT UI
-# ======================
-st.title("💼 Smart Resume Skill Extractor & Analyzer")
-st.markdown("### An NLP-based tool to extract, analyze and score resumes automatically ⚙️")
+
+st.title("Smart Resume Skill Extractor & Analyzer")
+st.markdown("### An NLP-based tool to extract, analyze and score resumes automatically ")
 
 col1, col2 = st.columns(2)
 
 with col1:
-    uploaded_file = st.file_uploader("📄 Upload Resume (PDF only)", type=["pdf"])
+    uploaded_file = st.file_uploader("Upload Resume (PDF only)", type=["pdf"])
 with col2:
-    job_role = st.text_input("🎯 Enter Target Job Role (e.g., Data Scientist, Web Developer)")
+    job_role = st.text_input("Enter Target Job Role (e.g., Data Scientist, Web Developer)")
 
-# Predefined sample skill lists (expand if needed)
+
 role_skills = {
     "data scientist": ["python", "pandas", "numpy", "machine learning", "tensorflow", "deep learning", "sql"],
     "web developer": ["html", "css", "javascript", "react", "node.js", "flask", "django"],
@@ -116,44 +110,41 @@ if uploaded_file:
     with st.spinner("Extracting text and analyzing..."):
         text = extract_text_from_pdf(uploaded_file)
 
-        # Load your skills list
+
         skills_df = pd.read_csv("data/skills_list.csv")
         skills_list = skills_df["skill"].tolist()
         extracted_skills = extract_skills(text, skills_list)
 
-        # Extra info
         education = extract_education(text)
         certifications = extract_certifications(text)
 
-        # Resume scoring
+
         job_skills = role_skills.get(job_role.lower(), [])
         score = calculate_resume_score(extracted_skills, job_skills)
 
-    # ======================
-    # DISPLAY RESULTS
-    # ======================
+
     st.success("✅ Resume analysis complete!")
-    tab1, tab2, tab3 = st.tabs(["📊 Overview", "🎓 Education & Certifications", "📈 Visual Insights"])
+    tab1, tab2, tab3 = st.tabs(["Overview", "Education & Certifications", "Visual Insights"])
 
     with tab1:
-        st.subheader("🧠 Extracted Technical Skills")
+        st.subheader("Extracted Technical Skills")
         st.write(", ".join(extracted_skills) if extracted_skills else "No skills detected.")
 
-        st.metric("🎯 Resume Match Score", f"{score}%")
+        st.metric("Resume Match Score", f"{score}%")
         if job_skills:
             st.write("**Target Role Skills:**", ", ".join(job_skills))
         else:
             st.info("No predefined skill list found for this role.")
 
     with tab2:
-        st.subheader("🎓 Education Details")
+        st.subheader("Education Details")
         st.write(", ".join(education) if education else "No education details detected.")
 
-        st.subheader("📜 Certifications")
+        st.subheader("Certifications")
         st.write(", ".join(certifications) if certifications else "No certifications found.")
 
     with tab3:
-        st.subheader("📊 Skill Frequency Distribution")
+        st.subheader("Skill Frequency Distribution")
         if extracted_skills:
             freq = Counter()
             for skill in extracted_skills:
@@ -167,7 +158,7 @@ if uploaded_file:
             plt.tight_layout()
             st.pyplot(plt)
 
-        st.subheader("🎯 Skill Category Contribution")
+        st.subheader("Skill Category Contribution")
         category_counts = {
             "Programming": len([s for s in extracted_skills if s.lower() in ["python", "java", "c++"]]),
             "Web": len([s for s in extracted_skills if s.lower() in ["html", "css", "javascript", "react", "node.js"]]),
@@ -178,7 +169,7 @@ if uploaded_file:
         sizes = list(category_counts.values())
 
         if sum(sizes) > 0:
-            # Filter out zero-value categories
+            
             filtered = {k: v for k, v in category_counts.items() if v > 0}
 
             if filtered:
@@ -196,7 +187,7 @@ if uploaded_file:
         textprops={'fontsize': 10}
     )
 
-    # Add a donut-style center
+    
                 centre_circle = plt.Circle((0, 0), 0.60, fc='white')
                 fig.gca().add_artist(centre_circle)
 
@@ -208,7 +199,7 @@ if uploaded_file:
 
 
 
-    # Download Button — FIXED CSV EXPORT
+    
     csv_data = pd.DataFrame({
         "Extracted Skills": [", ".join(extracted_skills)],
         "Education": [", ".join(education)],
